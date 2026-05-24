@@ -1,26 +1,36 @@
+if (VCPKG_TARGET_IS_WINDOWS)
+    vcpkg_check_linkage(ONLY_STATIC_LIBRARY)
+endif()
+
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO orange-cpp/omath
     REF "v${VERSION}"
-    SHA512 467b1abbdf5b9a7f49ed50824eaa4641f05d6088e84f40320b5c82a1bdbf685cc8d0f0a4f4ab6be49e3a8ed13103ee3e808dde3b556a00742f7b53c519c183e3
+    SHA512 5393159d060d0bf08ef50fb77996f994f149110a43b0420fb45c599f7269ed247270068cca2813ba3fb743cfd9c4541073e0ecf60bf584c59133b009bf73b087
     HEAD_REF master
 )
 
-file(READ "${SOURCE_PATH}/cmake/omathConfig.cmake.in" cmake_config)
+string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "dynamic" OMATH_SHARED)
 
-file(WRITE "${SOURCE_PATH}/cmake/omathConfig.cmake.in"
-"${cmake_config}
-check_required_components(omath)
-")
-
-string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "dynamic" BUILD_SHARED_LIBS)
+vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
+    FEATURES
+        "avx2"      OMATH_USE_AVX2
+        "imgui"     OMATH_IMGUI_INTEGRATION
+        "inline"    OMATH_ENABLE_FORCE_INLINE
+        "hooking"   OMATH_ENABLE_HOOKING
+        "lua"       OMATH_ENABLE_LUA
+)
 
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
-        -DOMATH_BUILD_TESTS=OFF
+        ${FEATURE_OPTIONS}
+        -DOMATH_USE_UNITY_BUILD=OFF
         -DOMATH_THREAT_WARNING_AS_ERROR=OFF
-        -DOMATH_BUILD_AS_SHARED_LIBRARY=${BUILD_SHARED_LIBS}
+        -DOMATH_BUILD_AS_SHARED_LIBRARY=${OMATH_SHARED}
+        -DOMATH_BUILD_TESTS=OFF
+        -DOMATH_BUILD_BENCHMARK=OFF
+        -DOMATH_BUILD_EXAMPLES=OFF
 )
 
 vcpkg_cmake_install()

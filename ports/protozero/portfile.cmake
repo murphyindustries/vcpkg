@@ -2,11 +2,9 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO mapbox/protozero
-    SHA512 90bf1f487efa0ad9da2f3b887b7a6dbd849fa3687dd2126c324f902a8584722f4f7d4a2ea86f6a0e75999f7be829f6ae26cad9df1cae55d0b29a9ec24a4dbfd2
-    REF v1.7.1
+    SHA512 937d2e7decd0b17170a80b12fdc8afc94c145b0f55ccb399af9486c30d8cda7d957782dfe44514e07ea7603d49f0f39103b757ec5210fb6b0ecaa7f0076f7d99
+    REF "v${VERSION}"
     HEAD_REF master
-    PATCHES
-        fix-no-tests.patch  # from https://github.com/mapbox/protozero/pull/110
 )
 
 

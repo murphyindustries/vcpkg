@@ -6,15 +6,21 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO catchorg/Catch2
     REF v${VERSION}
-    SHA512 e04c676e6bb3d7791f51a1caa770c4675d79b5396c9ba029c01ca0938e53bfa374dce117fccf753a89f3663192c91356acc9bc195e4866d215855df0667faff0
+    SHA512 09df8b291d0c756c492871ce0a4fb5c703162d1364a9864470b227d4d19d9865a0ba5293a5f38d0117cbc7c230f42be35db9f6e0ca5d889dff02f1745807f380
     HEAD_REF devel
     PATCHES
         fix-install-path.patch
 )
 
+vcpkg_check_features(OUT_FEATURE_OPTIONS OPTIONS
+    FEATURES
+        thread-safe-assertions CATCH_CONFIG_THREAD_SAFE_ASSERTIONS
+)
+
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
+        ${OPTIONS}
         -DCATCH_INSTALL_DOCS=OFF
         -DCMAKE_CXX_STANDARD=17
 )
@@ -36,4 +42,23 @@ file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/include/catch2/benchmark/internal")
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/include/catch2/generators/internal")
 
 file(WRITE "${CURRENT_PACKAGES_DIR}/include/catch.hpp" "#include <catch2/catch_all.hpp>")
+
+# Copy pdb files to lib folders
+if(VCPKG_TARGET_IS_WINDOWS AND NOT VCPKG_TARGET_IS_MINGW)
+  # Catch2 builds static libraries even when shared libraries are requested.
+  # We thus cannot use vcpkg_copy_pdbs which only works for dlls but have to search for the pdbs manually.
+  file(GLOB_RECURSE catch2_pdb_files "${CURRENT_BUILDTREES_DIR}/*.pdb")
+  list(FILTER catch2_pdb_files INCLUDE REGEX ".*${TARGET_TRIPLET}.*")
+  if(NOT DEFINED VCPKG_BUILD_TYPE OR VCPKG_BUILD_TYPE STREQUAL "release")
+    set(catch2_release_pdb_files ${catch2_pdb_files})
+    list(FILTER catch2_release_pdb_files INCLUDE REGEX ".*${TARGET_TRIPLET}-rel.*")
+    file(COPY ${catch2_release_pdb_files} DESTINATION "${CURRENT_PACKAGES_DIR}/lib")
+  endif()
+  if(NOT DEFINED VCPKG_BUILD_TYPE OR VCPKG_BUILD_TYPE STREQUAL "debug")
+    set(catch2_debug_pdb_files ${catch2_pdb_files})
+    list(FILTER catch2_debug_pdb_files INCLUDE REGEX ".*${TARGET_TRIPLET}-dbg.*")
+    file(COPY ${catch2_debug_pdb_files} DESTINATION "${CURRENT_PACKAGES_DIR}/debug/lib")
+  endif()
+endif()
+
 vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/LICENSE.txt")

@@ -1,7 +1,7 @@
+set(extra_patches "")
 if(VCPKG_TARGET_IS_WINDOWS)
-    set(PATCHES
+    list(APPEND extra_patches
         "0001-Use-libtre.patch"
-        "0002-Change-zlib-lib-name-to-match-CMake-output.patch"
         "0003-Fix-WIN32-macro-checks.patch"
         "0004-Typedef-POSIX-types-on-Windows.patch"
         "0005-Include-dirent.h-for-S_ISREG-and-S_ISDIR.patch"
@@ -14,22 +14,30 @@ if(VCPKG_TARGET_IS_WINDOWS)
         "0013-Check-for-backslash-in-argv-0-on-Windows.patch"
         "0015-MSYS2-Remove-ioctl-call.patch"
         "0016-Fix-file_famagic-function.patch"
-        "0017-Change-bzlib-name-to-match-CMake-output.patch"
     )
 endif()
 
+string(REGEX REPLACE "^([0-9]+)\\.([0-9]+)$" "FILE\\1_\\2" FILE_REF "${VERSION}")
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO file/file
-    REF FILE5_46
-    SHA512 9165bb5bdbe7b8fccac0c8675d4eb251a286ab2ab7a79e6f8ed98d36fa0928b889cf109c1da3a5cfff64d1b1006b5d73934c2d420484adae6f4c8e26a9ede18f
+    REF "${FILE_REF}"
+    SHA512 9ef8d1efd744115b0f28a7bef1a6b3e25c6feb71f6e37590bc18fe49e77d55adddb712527fd3c4080e0b70f13c5f33cdce3ce932e99a751e6de6a0e8b381c30a
     HEAD_REF master
-    PATCHES ${PATCHES}
+    PATCHES
+        0002-Change-zlib-lib-name-to-match-CMake-output.patch
+        0017-Change-bzlib-name-to-match-CMake-output.patch
+        ${extra_patches}
 )
 
 if(VCPKG_TARGET_IS_WINDOWS)
     set(VCPKG_C_FLAGS "${VCPKG_C_FLAGS} -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS")
     set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS")
+endif()
+
+if(VCPKG_TARGET_IS_WINDOWS AND VCPKG_LIBRARY_LINKAGE STREQUAL "static")
+    set(VCPKG_C_FLAGS "${VCPKG_C_FLAGS} -DBUILD_AS_WINDOWS_STATIC_LIBARAY")
+    set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DBUILD_AS_WINDOWS_STATIC_LIBARAY")
 endif()
 
 set(FEATURE_OPTIONS)

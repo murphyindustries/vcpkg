@@ -2,7 +2,7 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO ngtcp2/nghttp3
     REF v${VERSION}
-    SHA512 558c8fc75a27030ec39888f75fc29c0087ab82dfc485be7b87edb1adedd89dbcec9e2800d7936a67f563fa1d84fc5f8f5728cbbb79de406f4f430dbc4b102af4
+    SHA512 278182f31f9bbfc9e00ae01c730394859855da37a17f78917c43352bf793cb31d685833c5e38ef908559e0f8ae032d420cc5af8b0b87bbf19b2ca51e0c90e60f
     HEAD_REF main
     PATCHES
 )
@@ -10,8 +10,8 @@ vcpkg_from_github(
 vcpkg_from_github(
     OUT_SOURCE_PATH SFPARSE_SOURCE_PATH
     REPO ngtcp2/sfparse
-    REF 930bdf8421f29cf0109f0f1baaafffa376973ed5
-    SHA512 67e1005d4ccf054a47dcb5f813429c7fc12e708cff19f5144447bf1d0863b107dec66e402e1cb223f1492762d38420b48b1e4c03849d69db1ebbb265e7b891ac
+    REF ff7f230e7df2844afef7dc49631cda03a30455f3
+    SHA512 da9bbfd800636373e8ab8a6f073ca045abbd8baeeb6e2b6d469ddb3bc7a78958fc0b2c8fbcd50a757292862ef832d257863ab17b74d27c51c1b7fdbf004e833c
     HEAD_REF main
 )
 
@@ -54,6 +54,10 @@ if(VCPKG_LIBRARY_LINKAGE STREQUAL static)
     )
     file(APPEND "${CURRENT_PACKAGES_DIR}/include/nghttp3/version.h" [[
 ]])
+    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/include/nghttp3/nghttp3.h"
+    "#ifdef NGHTTP3_STATICLIB"
+    "#if 1"
+    )
 endif()
 
 file(INSTALL "${SOURCE_PATH}/COPYING" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}" RENAME copyright)

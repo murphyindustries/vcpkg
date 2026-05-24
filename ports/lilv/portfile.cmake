@@ -3,7 +3,7 @@ vcpkg_from_gitlab(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO lv2/lilv
     REF "v${VERSION}"
-    SHA512 844d72a07d3978e1cc908962f0fb957b47032277a419e1639885e3a49d27278fc48ab774229d18ba2b811bab755c8a1cbfa10b805de5f1cfe1bc2f9424913f5a
+    SHA512 4b39766a3340e545e2d30af19fcd5916a3231f9144c8da76bf47eda4d1c73bbdbb23f15a7f52610096daa54ef752d034b4fab340014a54fb5ab9057f592ed278
     HEAD_REF master
 )
 
@@ -29,7 +29,12 @@ vcpkg_copy_pdbs()
 vcpkg_fixup_pkgconfig()
 
 if("tools" IN_LIST FEATURES)
-    vcpkg_copy_tools(TOOL_NAMES lv2apply lv2bench lv2info lv2ls AUTO_CLEAN)
+    if(VCPKG_TARGET_IS_OSX)
+        # Since 0.26.2 lv2bench only builds if the POSIX realtime scheduler 'sched.h' is available, which is not the case on macOS
+        vcpkg_copy_tools(TOOL_NAMES lv2apply lv2info lv2ls AUTO_CLEAN)
+    else()
+        vcpkg_copy_tools(TOOL_NAMES lv2apply lv2bench lv2info lv2ls AUTO_CLEAN)
+    endif()
 endif()
 
 file(REMOVE_RECURSE

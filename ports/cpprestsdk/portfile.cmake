@@ -6,19 +6,13 @@ vcpkg_from_github(
     HEAD_REF master
     PATCHES 
         fix-find-openssl.patch
-        fix_narrowing.patch
+        fix-narrowing.patch
         fix-uwp.patch
         fix-clang-dllimport.patch # workaround for https://github.com/microsoft/cpprestsdk/issues/1710
-        silence-stdext-checked-array-iterators-warning.patch
+        fix-asio-error.patch
+        remove-stdext-checked-array-iterator-1836.patch # https://github.com/microsoft/cpprestsdk/pull/1836
+        remove-openprot-1844.diff # https://github.com/microsoft/cpprestsdk/pull/1844
 )
-
-set(OPTIONS)
-if(NOT VCPKG_TARGET_IS_UWP)
-    SET(WEBSOCKETPP_PATH "${CURRENT_INSTALLED_DIR}/share/websocketpp")
-    list(APPEND OPTIONS
-        -DWEBSOCKETPP_CONFIG=${WEBSOCKETPP_PATH}
-        -DWEBSOCKETPP_CONFIG_VERSION=${WEBSOCKETPP_PATH})
-endif()
 
 vcpkg_check_features(
     OUT_FEATURE_OPTIONS FEATURE_OPTIONS
@@ -36,7 +30,6 @@ vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}/Release"
     ${configure_opts}
     OPTIONS
-        ${OPTIONS}
         ${FEATURE_OPTIONS}
         -DBUILD_TESTS=OFF
         -DBUILD_SAMPLES=OFF
