@@ -4,9 +4,11 @@ endif()
 
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
-    REPO mm2/Little-CMS
-    REF "lcms${VERSION}"
-    SHA512 1b2781ed8898e65f15be17cf0130a1500ec0bf5ca5159f871dff5692e387747be9526feef0bc7c370200656fc0aabe3036746041285a3978e90adec200d685f2
+    # Fork of lcms 2.19.1 carrying the MSVC C5033 'register' fix (upstream PR mm2/Little-CMS#576).
+    # Revert to REPO mm2/Little-CMS / REF "lcms${VERSION}" once that fix ships in an upstream release.
+    REPO MajorMurphy/Little-CMS
+    REF 8610fe046bebb487c702990c5f95237096ff002c
+    SHA512 fab894f00f1169005d54c179130102f56736a3da666c423c98f4c3a2a66f941701d93089e5af1d130bd25015a53fdb716bbb5ea0f25443e3c4380ebe089e4c5f
     HEAD_REF master
     PATCHES
         ${SHARED_LIBRARY_PATCH}
