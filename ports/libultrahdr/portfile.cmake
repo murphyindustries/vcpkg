@@ -1,6 +1,6 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
-    REPO MajorMurphy/libultrahdr
+    REPO murphyindustries/libultrahdr
     REF 154127aec5aa18f05ca37fa63caf3460d32954df
     SHA512 50c2bd6659609ae8e3a643130cc7e4c9bca81296698dbc61bcc34c359c9d4cb562469e4f4ced5dd40aa8afbd286c855ebb09a11a8207d5ee01f269722097f191
     HEAD_REF master
