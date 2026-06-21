@@ -13,15 +13,30 @@ vcpkg_cmake_configure(
 
 vcpkg_cmake_build()
 
-# libultrahdr has no install target; copy build outputs manually
+# libultrahdr has no install target; copy build outputs manually.
 set(BUILDTREES_REL "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel")
 set(BUILDTREES_DBG "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-dbg")
 
-file(INSTALL "${BUILDTREES_REL}/uhdr.lib" DESTINATION "${CURRENT_PACKAGES_DIR}/lib")
-file(INSTALL "${BUILDTREES_REL}/uhdr.dll" DESTINATION "${CURRENT_PACKAGES_DIR}/bin")
+if(VCPKG_TARGET_IS_WINDOWS)
+    # Windows (dynamic): import lib + DLL.
+    file(INSTALL "${BUILDTREES_REL}/uhdr.lib" DESTINATION "${CURRENT_PACKAGES_DIR}/lib")
+    file(INSTALL "${BUILDTREES_REL}/uhdr.dll" DESTINATION "${CURRENT_PACKAGES_DIR}/bin")
 
-file(INSTALL "${BUILDTREES_DBG}/uhdr.lib" DESTINATION "${CURRENT_PACKAGES_DIR}/debug/lib")
-file(INSTALL "${BUILDTREES_DBG}/uhdr.dll" DESTINATION "${CURRENT_PACKAGES_DIR}/debug/bin")
+    file(INSTALL "${BUILDTREES_DBG}/uhdr.lib" DESTINATION "${CURRENT_PACKAGES_DIR}/debug/lib")
+    file(INSTALL "${BUILDTREES_DBG}/uhdr.dll" DESTINATION "${CURRENT_PACKAGES_DIR}/debug/bin")
+else()
+    # macOS / Linux: static archive (the default linkage on these triplets). libuhdr.a does NOT
+    # bundle libjpeg-turbo, so we also ship the generated libuhdr.pc (Requires.private: libjpeg)
+    # and let vcpkg_fixup_pkgconfig wire the transitive jpeg link for consumers.
+    file(INSTALL "${BUILDTREES_REL}/libuhdr.a" DESTINATION "${CURRENT_PACKAGES_DIR}/lib")
+    file(INSTALL "${BUILDTREES_REL}/libuhdr.pc" DESTINATION "${CURRENT_PACKAGES_DIR}/lib/pkgconfig")
+
+    file(INSTALL "${BUILDTREES_DBG}/libuhdr.a" DESTINATION "${CURRENT_PACKAGES_DIR}/debug/lib")
+    file(INSTALL "${BUILDTREES_DBG}/libuhdr.pc"
+         DESTINATION "${CURRENT_PACKAGES_DIR}/debug/lib/pkgconfig")
+
+    vcpkg_fixup_pkgconfig()
+endif()
 
 file(INSTALL "${SOURCE_PATH}/ultrahdr_api.h" DESTINATION "${CURRENT_PACKAGES_DIR}/include")
 file(INSTALL "${SOURCE_PATH}/README.md" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}")
