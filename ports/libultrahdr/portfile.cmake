@@ -1,8 +1,8 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO murphyindustries/libultrahdr
-    REF 69c1240f11e04c16dedf7e5d04a9353188c14dd4
-    SHA512 4e3e866ad899f0832395122c49a7458e994587586241c72b73698e64eb79936bafc4246d2b048a9c9a72f861b03ddf17d6d8b6f72155ef18e514bbb59f148e37
+    REF 93ba8e2544a22b57be438c14417cbec02ac6018d
+    SHA512 0a10d3b5c4fbe05e33dea26e4d19b3ae0820963b579f9ee8f4b47216956fe516da0fff4fbb96abc04ac237a0b372e7818d39e091152f8df73b38aab6d20f057a
     HEAD_REF apple-gainmap-jpeg
 )
 vcpkg_cmake_configure(
