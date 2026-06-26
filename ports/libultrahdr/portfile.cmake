@@ -9,6 +9,7 @@ vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
         -DUHDR_BUILD_DEPS=OFF
+        -DUHDR_WRITE_XMP=ON  # emit BOTH ISO 21496-1 and Adobe hdrgm XMP gain-map metadata (~+1.5 KB/file)
 )
 
 vcpkg_cmake_build()
