@@ -28,6 +28,7 @@ vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
         openmp      ENABLE_OPENMP
         openmp      CMAKE_REQUIRE_FIND_PACKAGE_OpenMP
         dng-lossy   CMAKE_REQUIRE_FIND_PACKAGE_JPEG
+        x3f         ENABLE_X3FTOOLS
 )
 
 vcpkg_cmake_configure(

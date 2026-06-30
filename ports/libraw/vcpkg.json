@@ -35,6 +35,9 @@
     },
     "openmp": {
       "description": "Build library with OpenMP support"
+    },
+    "x3f": {
+      "description": "Sigma/Polaroid Foveon X3F decoder (bundled in libraw source; no external deps)"
     }
   }
 }
